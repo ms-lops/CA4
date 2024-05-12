@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build('my-web-service-image')
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    docker.image('my-web-service-image').tag('latest')
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://dockerhub.com', 'docker-credentials-id') {
+                        docker.image('my-web-service-image').push('latest')
+                    }
+                }
+            }
+        }
+    }
+}
